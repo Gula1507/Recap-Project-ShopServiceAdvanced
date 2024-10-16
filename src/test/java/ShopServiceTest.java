@@ -26,16 +26,12 @@ class ShopServiceTest {
     }
 
     @Test
-    void addOrderTest_whenInvalidProductId_expectNull() {
+    void addOrderTest_whenInvalidProductId_expectException() {
         //GIVEN
         ShopService shopService = new ShopService();
         List<String> productsIds = List.of("1", "2");
-
-        //WHEN
-        Order actual = shopService.addOrder(productsIds);
-
         //THEN
-        assertNull(actual);
+        assertThrows(ProductIdException.class, () -> shopService.addOrder(productsIds));
     }
 
 
