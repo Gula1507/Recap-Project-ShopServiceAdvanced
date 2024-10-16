@@ -36,8 +36,9 @@ class ShopServiceTest {
 
 
     @Nested
-    class GetOrdersByStatusTests {
+    class GetOrdersAndUpdateOrderTests {
         private ShopService shopService;
+        private OrderRepo orderRepo;
 
         @BeforeEach
         void setUp() {
@@ -49,7 +50,7 @@ class ShopServiceTest {
             Order order1 = new Order("111", new ArrayList<>(List.of(product1, product2)), OrderStatus.PROCESSING);
             Order order2 = new Order("211", new ArrayList<>(List.of(product3)), OrderStatus.IN_DELIVERY);
             List<Order> orders = new ArrayList<>(List.of(order1, order2));
-            OrderRepo orderRepo = new OrderListRepo(orders);
+            orderRepo = new OrderListRepo(orders);
             shopService = new ShopService(productRepo, orderRepo);
         }
 
@@ -68,17 +69,41 @@ class ShopServiceTest {
         @Test
         void getOrdersByStatus_whenOrdersWithDeliveryStatus_returnOptionalOrderList() {
 
-            //WHEN
-            Optional<List<Order>> filteredOrders = shopService.getOrdersByStatus(OrderStatus.IN_DELIVERY);
-
-            //THEN
+            //GIVEN
             Product product3 = new Product("3", "couch");
             Order order2 = new Order("211", new ArrayList<>(List.of(product3)), OrderStatus.IN_DELIVERY);
             List<Order> ordersInDeliveryList = new ArrayList<>(List.of(order2));
             Optional<List<Order>> ordersInDelivery = Optional.of(ordersInDeliveryList);
 
+            //WHEN
+            Optional<List<Order>> filteredOrders = shopService.getOrdersByStatus(OrderStatus.IN_DELIVERY);
+
             //THEN
             assertEquals(ordersInDelivery, filteredOrders);
+
+        }
+
+        @Test
+        void updateOrder_updatesStatusToProcessing_ifOrderIdFound() {
+            //GIVEN
+            Product product3 = new Product("3", "couch");
+            Order orderToFind = new Order("211", new ArrayList<>(List.of(product3)), OrderStatus.IN_DELIVERY);
+
+            //WHEN
+            shopService.updateOrder("211", OrderStatus.PROCESSING);
+            Order expected = orderToFind.withOrderStatus(OrderStatus.PROCESSING);
+            Order actual = orderRepo.getOrderById("211");
+
+            //THEN
+            assertEquals(expected, actual);
+
+        }
+
+        @Test
+        void updateOrder_ThrowOrderIdException_ifOrderIdNotFound() {
+
+            //WHEN & THEN
+            assertThrows(OrderIdException.class, () -> shopService.updateOrder("011", OrderStatus.PROCESSING));
 
         }
     }
