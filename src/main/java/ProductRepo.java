@@ -9,6 +9,10 @@ public class ProductRepo {
         products.add(new Product("1", "Apfel"));
     }
 
+    public ProductRepo(List<Product> products) {
+        this.products = products;
+    }
+
     public List<Product> getProducts() {
         return products;
     }
