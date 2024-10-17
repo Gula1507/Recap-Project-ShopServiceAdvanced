@@ -35,7 +35,7 @@ public class ShopService {
 
     public Optional<List<Order>> getOrdersByStatus(OrderStatus requiredOrderStatus) {
         List<Order> filteredOrders = orderRepo.getOrders().stream()
-                .filter(order -> order.OrderStatus().equals(requiredOrderStatus))
+                .filter(order -> order.orderStatus().equals(requiredOrderStatus))
                 .toList();
         return filteredOrders.isEmpty() ? Optional.empty() : Optional.of(filteredOrders);
     }

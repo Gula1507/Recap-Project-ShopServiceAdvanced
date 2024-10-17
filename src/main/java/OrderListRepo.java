@@ -1,3 +1,4 @@
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,9 @@ public class OrderListRepo implements OrderRepo {
     }
 
     public Order addOrder(Order newOrder) {
-        orders.add(newOrder);
-        return newOrder;
+        Order newOrderWithActualisedDate = newOrder.withOrderDate(ZonedDateTime.now());
+        orders.add(newOrderWithActualisedDate);
+        return newOrderWithActualisedDate;
     }
 
     public void removeOrder(String id) {
